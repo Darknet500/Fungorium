@@ -9,17 +9,34 @@ import java.lang.reflect.Method;
 import java.util.*;
 
 public class Skeleton {
-    public static final Skeleton SKELETON = new Skeleton();
-    private List<Object> objectStack;
 
+    /**
+     * This is a global skeleton object. It can be called anywhere. It is static to not let it overwrite by anything
+     */
+    public static final Skeleton SKELETON = new Skeleton();
+    /**
+     * List to store the called objects
+     */
+    private LinkedList<Object> objectStack;
+
+
+    /**
+     * Boolean to controll the printout
+     */
     public static boolean print=false;
 
+    /**
+     * Hashmap that stores the name of the object that was called
+     */
     public HashMap<Object, String> objectNameMap;
 
+    /**
+     * Skeleton Constructor
+     */
     public Skeleton(){
 
         objectNameMap = new HashMap<>();
-        objectStack = new ArrayList<>();
+        objectStack = new LinkedList<>();
     }
 
     private String[] useCases = {"Bogár harap (nincs rajta spóra hatás)",
@@ -65,7 +82,7 @@ public class Skeleton {
 
         /**Looping while user gives a correct input */
         while (true) {
-            System.out.println("Please choose the number (1-12) of the testCase you'd like to use (or 'q' to quit):");
+            System.out.println("Please choose the number (1-13) of the testCase you'd like to use (or 'q' to quit):");
             choosenTestCase = scn.nextLine();
 
             /** Exit if user gives 'q' as input */
@@ -109,13 +126,17 @@ public class Skeleton {
         }
     }
 
+    /**
+     * Gets numeric input from user. It is called when the model needs unimplemented information about the model
+     * @param message What to ask from the user
+     * @param min minimum number the user must give
+     * @param max Maximum number the user must give
+     * @return number the user gave
+     */
     public int getNumericInput(String message, int min, int max) {
         printCall(this, Collections.emptyList(),"getNumericInput");
 
         System.out.println(message);
-
-        //System.out.print("Please enter a number between " + min + " and " + max + ": ");
-
         Scanner scn = new Scanner(System.in);
 
         /**Looping while user gives a correct input */
@@ -139,6 +160,11 @@ public class Skeleton {
 
     }
 
+    /**
+     * Gets boolean input from user. It is called when the model needs unimplemented information about the model
+     * @param message What to ask from the user
+     * @return boolean value the user gave
+     */
     public boolean getBoolInput(String message) {
         System.out.println(message);
         System.out.print("Please enter a number between 0 (false) and 1 (ture): ");
@@ -165,38 +191,58 @@ public class Skeleton {
         }
     }
 
+    /**
+     * Prints out the object and the called object and the method that was used with the parameters. (Synchronous calls)
+     * @param called Called object
+     * @param parameters List of the parameters gave
+     * @param functionHeader Name of the method
+     */
     public void printCall(Object called, List<Object> parameters, String functionHeader) {
         if (print) {
+            /** Makes a tree like look */
             for (int i = 0; i < objectStack.size(); i++) {
                 System.out.print('\t');
             }
+            /** prints out the caller -> called: Method(parameters)*/
             System.out.print(SKELETON.objectNameMap.get(objectStack.getLast()) + "->" + SKELETON.objectNameMap.get(called) + ": " + functionHeader + "(");
+            /** gets the parameters of the method */
             for (Object o : parameters) {
                 if (SKELETON.objectNameMap.containsKey(o)) {
                     System.out.print(SKELETON.objectNameMap.get(o));
                 } else if(o==null){
                     System.out.print("null");
                 }
-                System.out.print((o==parameters.getLast()?"":", "));
+                System.out.print((o==parameters.get(parameters.size()-1)?"":", "));
             }
             System.out.print(")\n");
+
+            /** Adding last called object to the end of list*/
             objectStack.addLast(called);
 
         }
     }
 
+    /**
+     * Prints out the return value of the called object to the caller (Asynchronous call)
+     * @param message The returned value's String
+     */
     public void printReturn(String message){
         if(print) {
+            /** Makes a tree like look */
             for (int i = 0; i < objectStack.size() - 1; i++) {
                 System.out.print('\t');
             }
+            /** prints out the called --> caller: message */
             System.out.println(SKELETON.objectNameMap.get(objectStack.getLast()) + "-->" + SKELETON.objectNameMap.get(SKELETON.objectStack.get(SKELETON.objectStack.size() - 2)) + (message==""?"":": " + message));
             objectStack.removeLast();
         }
     }
 
+    /**
+     * Bug bite (No effect) same as in the sequence diagramm
+     */
     public void testCase1(){
-        System.out.println("Test case 1");
+        System.out.println("Bogár harap (nincs rajta spóra hatás)");
         Tekton location = new Tekton();
         objectNameMap.put(location, "location");
         Tekton tekton2 = new Tekton();
@@ -223,8 +269,12 @@ public class Skeleton {
         print = false;
 
     }
+
+    /**
+     * Bug wants to bite (biteBlocked) same as in the sequence diagramm
+     */
     public void testCase2(){
-        System.out.println("Test case 2");
+        System.out.println("Bogár harapni akar (harapás gátolt)");
         Tekton location = new Tekton();
         objectNameMap.put(location, "location");
         Tekton tekton2 = new Tekton();
@@ -253,8 +303,12 @@ public class Skeleton {
 
 
     }
+
+    /**
+     * Bug move (No Spore effect) same as in the sequence diagramm
+     */
     public void testCase3(){
-        System.out.println("Test case 3");
+        System.out.println("Bogár mozog (nincs rajta hatás)");
         Tekton location = new Tekton();
         objectNameMap.put(location, "location");
         Tekton to = new Tekton();
@@ -282,8 +336,12 @@ public class Skeleton {
 
 
     }
+
+    /**
+     * Bug move (Booster Spore effect) same as in the sequence diagramm
+     */
     public void testCase4(){
-        System.out.println("Test case 4");
+        System.out.println("Bogár mozog (gyorsított)");
         Tekton location = new Tekton();
         objectNameMap.put(location, "location");
         Tekton to = new Tekton();
@@ -310,8 +368,12 @@ public class Skeleton {
         print = false;
 
     }
+
+    /**
+     * Bug move (Slower Spore effect) same as in the sequence diagramm
+     */
     public void testCase5(){
-        System.out.println("Test case 5");
+        System.out.println("Bogár mozog (lassított)");
         Tekton location = new Tekton();
         objectNameMap.put(location, "location");
         Tekton to = new Tekton();
@@ -338,8 +400,12 @@ public class Skeleton {
         print = false;
 
     }
+
+    /**
+     * Bug eatSpore same as in the sequence diagramm
+     */
     public void testCase6(){
-        System.out.println("Test case 6");
+        System.out.println("Bogár elfogyaszt egy gyorsító spórát");
         Tekton location = new Tekton();
         objectNameMap.put(location, "location");
         Bug bug = new Bug();
@@ -353,14 +419,19 @@ public class Skeleton {
         objectNameMap.put(shroomer, "shroomer");
         BoosterSpore boospore = new BoosterSpore(shroomer);
         objectNameMap.put(boospore, "boospore");
+        location.storeSpore(boospore);
 
         print = true;
         bug.eat(boospore);
         print = false;
 
     }
+
+    /**
+     * Shroomer end of turn same as in the sequence diagramm
+     */
     public void testCase7(){
-        System.out.println("Test case 7");
+        System.out.println("Gombász kör végén fonalak korát növeli");
         Shroomer shroomer = new Shroomer((x, y)->new BoosterMushroom(x, y));
         objectNameMap.put(shroomer, "shroomer");
         Tekton end1 = new Tekton();
@@ -382,8 +453,11 @@ public class Skeleton {
 
     }
 
+    /**
+     * Grow Hypa from tekton without Spore same as in the sequence diagramm
+     */
     public void testCase8(){
-        System.out.println("Test case 8");
+        System.out.println("Gombász olyan tektonról növeszt fonalat, ahol nincs spóra");
         Tekton start = new Tekton();
         objectNameMap.put(start, "start");
         Tekton target = new Tekton();
@@ -402,8 +476,11 @@ public class Skeleton {
         print = false;
     }
 
+    /**
+     * Grow Hypa from tekton with Spore same as in the sequence diagramm
+     */
     public void testCase9(){
-        System.out.println("Test case 9");
+        System.out.println("A gombász olyan tektonról növeszt fonalat, ahol van (nem feltétlenül saját) saját spóra");
         Tekton start = new Tekton();
         objectNameMap.put(start, "start");
         Tekton middle = new Tekton();
@@ -429,8 +506,12 @@ public class Skeleton {
 
 
     }
+
+    /**
+     * Throw Spore with boosterMushroom same as in the sequence diagramm
+     */
     public void testCase10(){
-        System.out.println("Test case 10");
+        System.out.println("A gombász spórát szór az egyik gombával");
         Tekton location = new Tekton();
         objectNameMap.put(location, "location");
         Tekton tekton1 = new Tekton();
@@ -454,8 +535,12 @@ public class Skeleton {
         print = false;
 
     }
+
+    /**
+     * At the end of game turn deletable hypas destruction same as in the sequence diagramm
+     */
     public void testCase11(){
-        System.out.println("Test case 11");
+        System.out.println("Játék kör végén a Swampokon a törlendő fonalak törlése");
         Swamp swamp = new Swamp();
         objectNameMap.put(swamp, "swamp");
         Tekton tekton = new Tekton();
@@ -481,8 +566,12 @@ public class Skeleton {
 
 
     }
+
+    /**
+     * At the end of game turn a tekton breaks in two same as in the sequence diagramm
+     */
     public void testCase12(){
-        System.out.println("Test case 12");
+        System.out.println("Kör végén egy tekton kettétörik");
         Tekton breaking = new Tekton();
         objectNameMap.put(breaking, "breaking");
         Tekton tekton = new Tekton();
@@ -507,8 +596,11 @@ public class Skeleton {
         print = false;
     }
 
+    /**
+     * Grow mushroom same as in the sequence diagramm
+     */
     public void testCase13(){
-        System.out.println("Test case 13");
+        System.out.println("Egy gombatest növesztése megfelelő körülmények után");
         Tekton applicable = new Tekton();
         objectNameMap.put(applicable, "applicable");
         Tekton tekton = new Tekton();
