@@ -21,6 +21,10 @@ public class Slowed extends Normal {
      */
     public Slowed() {}
 
+    /**
+     * ha más Spóra hatása alatt áll a rovar nem ehet másik spórat
+     * @return Mindig false mivel
+     */
     @Override
     public boolean eat() {
         SKELETON.printCall(this, Collections.emptyList(), "eat");
@@ -50,10 +54,19 @@ public class Slowed extends Normal {
         return ret;
     }
 
+    /**
+     * Végrehajtja a Bug körének lezárását, amely tartalmazhat állapotfrissítéseket
+     * @param b A Bug, amelynek a köre lezárul.
+     */
     public void endOfTurn(Bug b){
         SKELETON.printCall(this, List.of(b), "endOfTurn");
+        /** Ha 2 kör óta effect alatt áll átállítja a bug strategy-jét normálra**/
         if(b.getUnderEffectSince()==2){
-            b.setStrategy(new Normal());
+            Normal normal = new Normal();
+            SKELETON.objectNameMap.put(normal, "normal");
+            SKELETON.printCall(normal, Collections.emptyList(), "Normal" );
+            SKELETON.printReturn("");
+            b.setStrategy(normal);
         }
         SKELETON.printReturn("");
     }
