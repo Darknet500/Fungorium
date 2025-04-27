@@ -19,7 +19,3 @@ if ($LASTEXITCODE -ne 0) {
 }
 
 Write-Host "Compilation successful!" -ForegroundColor Green
-
-$mainClass = "Controll.Main"
-Write-Host "Running $mainClass..."
-java -cp $outDir $mainClass
