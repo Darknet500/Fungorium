@@ -131,6 +131,19 @@ public class Swamp extends TektonBase {
     public void breakTekton(long seed) {
         Swamp newTekton = new Swamp();
 
+        if(seed == 42) {
+            for(TektonBase neighbour: this.getNeighbours()){
+                neighbour.removeNeighbour(this);
+            }
+            this.setNeighbours(new ArrayList<>());
+            List<Hypa> hypasList = new ArrayList<Hypa>();
+            hypasList.addAll(connectedHypas);
+            for(Hypa h : hypasList){
+                h.die();
+
+            }
+            return;
+        }
         // Szétosztjuk a szomszédokat 50-50%
         Random rnd = new Random(seed);
 
@@ -151,7 +164,6 @@ public class Swamp extends TektonBase {
         // A régi és az új szomszédok lesznek
         addNeighbour(newTekton);
         newTekton.addNeighbour(this);
-
         // A régi Tekton összes fonala elhal
         List<Hypa> hypasList = new ArrayList<Hypa>();
         hypasList.addAll(connectedHypas);

@@ -3,11 +3,17 @@ package Model.Bug;
 import Model.Bridge.GameBoard;
 import Model.Tekton.*;
 import Model.Shroomer.*;
+import View.Hitbox.BugHitbox;
 
 /**
  * Bogárt megvalósító osztály, amit a játékos írányít.
  */
 public class Bug {
+
+    /**
+     * eltárolja a hozzá kapcsolódó hitbox-ot, hogy tudja azt értesíteni az őt ért változásokról
+     */
+    private BugHitbox hitbox;
 
     /**
      * A Bug jelenlegi helyét reprezentáló Tekton példány.
@@ -34,9 +40,9 @@ public class Bug {
      * és egy normál stratégiával inicializálja.
      * Elnevezi magát, és beleteszi magát a gameBoard nameObjectMap-jébe
      */
-    public Bug(Bugger bugger) {
+    public Bug(Bugger bugger, TektonBase tekton) {
         this.bugger=bugger;
-        tekton = null;
+        this.tekton = tekton;
         strategy = new Normal();
         GameBoard.addReferenceToMaps("bug", this);
     }
@@ -46,7 +52,9 @@ public class Bug {
         return bugger;
     }
 
-
+    public void addObserver(BugHitbox hitbox){
+        this.hitbox = hitbox;
+    }
 
     /**
      * Beállítja a Bug stratégiáját.
@@ -56,12 +64,18 @@ public class Bug {
     public void setStrategy(Strategy s) {
         if(strategy!=null){
             GameBoard.removeReferenceFromMaps(strategy);
+            resetUnderEffectSince();
         }
         strategy = s;
+
     }
 
     public Strategy getStrategy() {
         return strategy;
+    }
+
+    public BugHitbox getHitbox() {
+        return hitbox;
     }
 
      /**
@@ -116,7 +130,9 @@ public class Bug {
      * @param t Az új Tekton helyszín.
      */
     public void setLocation(TektonBase t){
+
         tekton = t;
+        hitbox.onPositionChanged();
     }
 
     /**
@@ -135,7 +151,6 @@ public class Bug {
 
     public void endOfTurn(){
         strategy.endOfTurn(this);
-
     }
 
     public void resetUnderEffectSince(){

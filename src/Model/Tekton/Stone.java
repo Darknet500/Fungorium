@@ -25,6 +25,11 @@ public class Stone extends TektonBase {
     }
 
     @Override
+    public boolean canMushroomGrow(){
+        return false;
+    }
+
+    @Override
     public void endOfRound(){}
 
     /**
@@ -73,7 +78,19 @@ public class Stone extends TektonBase {
     public void breakTekton(long seed) {
         Stone newTekton = new Stone();
 
-        // Szétosztjuk a szomszédokat 50-50%
+        if(seed == 42) {
+            for(TektonBase neighbour: this.getNeighbours()){
+                neighbour.removeNeighbour(this);
+            }
+            this.setNeighbours(new ArrayList<>());
+            List<Hypa> hypasList = new ArrayList<Hypa>();
+            hypasList.addAll(connectedHypas);
+            for(Hypa h : hypasList){
+                h.die();
+
+            }
+            return;
+        }        // Szétosztjuk a szomszédokat 50-50%
         Random rnd = new Random(seed);
 
         List<TektonBase> remain = new ArrayList<>();
@@ -89,7 +106,6 @@ public class Stone extends TektonBase {
 
         this.setNeighbours(remain);
         newTekton.setNeighbours(newNeighbours);
-
         // A régi és az új szomszédok lesznek
         addNeighbour(newTekton);
         newTekton.addNeighbour(this);

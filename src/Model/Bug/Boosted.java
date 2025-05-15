@@ -51,6 +51,7 @@ public class Boosted extends Normal {
         if(canDo && to.tryBug(b)){
             b.getLocation().setBug(null);
             b.setLocation(to);
+            b.getHitbox().onPositionChanged();
             return true;
         }
         return false;
@@ -68,6 +69,7 @@ public class Boosted extends Normal {
             GameBoard.removeReferenceFromMaps(b.getStrategy());
             Normal normal = new Normal();
             b.setStrategy(normal);
+            b.getHitbox().onStrategyChanged("normal");
         }else
             b.increaseUnderEffectSince();
     }

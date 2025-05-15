@@ -7,6 +7,7 @@ import Model.Shroomer.Mushroom;
 import Model.Shroomer.Shroomer;
 import Model.Shroomer.Spore;
 
+
 import java.util.*;
 
 
@@ -15,8 +16,7 @@ import java.util.*;
  * tárolhat spórákat, illetve kapcsolódhat hozzá egy gomba vagy egy bogár.
  * A Tektonok egymáshoz kapcsolódhatnak és eltörhetnek.
  */
-public class Tekton  extends TektonBase{
-
+public class Tekton  extends TektonBase {
 
     /**
      * Alapértelmezett konstruktor, amely inicializálja a Tekton objektumot.
@@ -39,8 +39,23 @@ public class Tekton  extends TektonBase{
      */
     @Override
     public void breakTekton(long seed) {
+
         Tekton newTekton = new Tekton();
 
+        if(seed == 42) {
+            for(TektonBase neighbour: this.getNeighbours()){
+                neighbour.removeNeighbour(this);
+            }
+            this.setNeighbours(new ArrayList<>());
+            List<Hypa> hypasList = new ArrayList<Hypa>();
+            hypasList.addAll(connectedHypas);
+            for(Hypa h : hypasList){
+                h.die();
+
+            }
+
+            return;
+        }
         // Szétosztjuk a szomszédokat 50-50%
         Random rnd = new Random(seed);
 
@@ -62,11 +77,13 @@ public class Tekton  extends TektonBase{
         addNeighbour(newTekton);
         newTekton.addNeighbour(this);
 
+
         // A régi Tekton összes fonala elhal
         List<Hypa> hypasList = new ArrayList<Hypa>();
         hypasList.addAll(connectedHypas);
         for(Hypa h : hypasList){
             h.die();
+
         }
     }
 
@@ -103,8 +120,9 @@ public class Tekton  extends TektonBase{
      */
     @Override
     public boolean canMushroomGrow(Shroomer s) {
-        if (hasMushroom())
+        if (hasMushroom()) {
             return false;
+        }
         if (s == null) {
             return false;  // Ha a Shroomer null, akkor nem tud nőni gomba
         }

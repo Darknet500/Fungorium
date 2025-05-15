@@ -6,12 +6,14 @@ import Model.Shroomer.Hypa;
 import Model.Shroomer.Mushroom;
 import Model.Shroomer.Shroomer;
 import Model.Shroomer.Spore;
+import View.Hitbox.TektonHitbox;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
 public abstract class TektonBase {
+
     /**
      * Az adott Tektonhoz kapcsolódó bogár.
      */
@@ -37,12 +39,27 @@ public abstract class TektonBase {
      */
     protected List<Hypa> connectedHypas;
 
+    protected TektonHitbox hitbox;
+
     public TektonBase() {
         this.bug = null;
         this.mushroom = null;
         this.storedSpores = new ArrayList<>();
         this.neighbours = new ArrayList<>();
         this.connectedHypas = new ArrayList<>();
+        this.hitbox = null;
+    }
+
+    /**
+     * Sets the Hitbox of the tekton
+     * @param h Hitbox wich will be set
+     */
+    public void addObserver(TektonHitbox h){
+        this.hitbox = h;
+    }
+
+    public TektonHitbox getHitbox(){
+        return this.hitbox;
     }
 
     /**
@@ -74,6 +91,14 @@ public abstract class TektonBase {
 
     public abstract boolean canMushroomGrow(Shroomer s);
 
+    /**
+     * az első gombatest növesztésének engedélyezése, vagy elutasítása, cask a stone tekton utasítja el
+     * @return
+     */
+    public boolean canMushroomGrow(){
+        return true;
+    }
+
     public abstract void breakTekton(long seed);
 
     /**
@@ -82,7 +107,7 @@ public abstract class TektonBase {
      * @param neighbour - Az eltávolítandó szomszéd Tekton.
      */
     public void removeNeighbour(TektonBase neighbour) {
-        this.neighbours.remove(neighbour);
+        neighbours.remove(neighbour);
     }
 
     /**
@@ -105,7 +130,6 @@ public abstract class TektonBase {
      * @param s - A tárolandó spóra.
      */
     public void storeSpore(Spore s) {
-
         if (s != null) {
             storedSpores.add(s);
         }
@@ -116,7 +140,7 @@ public abstract class TektonBase {
      * @param s - Az eltávolítandó spóra.
      */
     public void removeSpore(Spore s) {
-        if (s != null) {
+        if (s != null && storedSpores.remove(s)) {
             storedSpores.remove(s);
         }
     }
@@ -164,8 +188,7 @@ public abstract class TektonBase {
      * @param h - Az eltávolítandó Hypa.
      */
     public void removeHypa(Hypa h) {
-        if (h != null) {
-            connectedHypas.remove(h);
+        if (h != null && connectedHypas.remove(h)) {
         }
     }
 
@@ -174,10 +197,9 @@ public abstract class TektonBase {
      * @param h - A hozzáadandó Hypa.
      */
     public void connectHypa(Hypa h) {
-        //if (h != null && !getHypas().contains(h)) {
-        //    getHypas().add(h);
-        //}
-        connectedHypas.add(h);
+        if (h != null && !connectedHypas.contains(h)) {
+            connectedHypas.add(h);
+        }
     }
 
     /**
@@ -187,7 +209,11 @@ public abstract class TektonBase {
     public void setMushroomRemoveSpores(Mushroom shr) {
         if(mushroom == null && shr != null) {
             //gomba beállítása
-            mushroom = shr;
+            Mushroom oldMushroom = this.mushroom;
+            this.mushroom = shr;
+
+            if (oldMushroom != null) {
+            }
 
             //shroomer lekérése
             Shroomer shroomer = shr.getShroomer();
@@ -240,7 +266,9 @@ public abstract class TektonBase {
      * @param t - A hozzáadandó Tekton.
      */
     public void addNeighbour(TektonBase t){
-        neighbours.add(t);
+        if (t != null && !neighbours.contains(t)) {
+            neighbours.add(t);
+        }
     }
 
     /**
@@ -288,6 +316,8 @@ public abstract class TektonBase {
      * @param bug - Az új bogár.
      */
     public void setBug(Bug bug) {
+        Bug oldBug = this.bug;
         this.bug = bug;
     }
+
 }
