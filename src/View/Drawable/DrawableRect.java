@@ -3,6 +3,7 @@ package View.Drawable;
 import java.awt.*;
 import java.awt.geom.Rectangle2D;
 import java.awt.image.BufferedImage;
+import java.awt.Point;
 
 public class DrawableRect implements Drawable {
 
@@ -36,7 +37,7 @@ public class DrawableRect implements Drawable {
         Position = new Point(x, y);
         this.Color = color;
         Width = width;
-        rect = new Rectangle2D.Double(x, y, width, width);
+        rect = new Rectangle2D.Double(x-width/2, y-width/2, width, width);
     }
     /**
      * Constructor of the drawableRect object
@@ -47,7 +48,7 @@ public class DrawableRect implements Drawable {
         Position = pos;
         this.Color = color;
         Width = width;
-        rect = new Rectangle2D.Double(pos.x, pos.y, width, width);
+        rect = new Rectangle2D.Double(pos.x-width/2, pos.y-width/2, width, width);
     }
 
     /**

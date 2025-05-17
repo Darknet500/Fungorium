@@ -159,7 +159,7 @@ public class Shroomer extends Player {
         List<TektonBase> neighbours = location.getNeighbours();
         int age = mushroom.getAge();
         if(age<=4) {
-            if (!neighbours.contains(target)){
+            if (!neighbours.contains(target)&&location!=target){
                 return false;
             }
 
@@ -334,9 +334,10 @@ public class Shroomer extends Player {
         for (Hypa h: hypasaround) {
             if (h.getShroomer()==this){
                 if (b.beEaten(h)) {
-                    if (!location.hasMushroom()){
+                    if (location.canMushroomGrow(this)){
                         Mushroom mush = mushroomctor.apply(this, location);
                         mushrooms.add(mush);
+                        increaseScore(1);
                         location.setMushroom(mush);
                         traverseHypaNetwork();
                     }

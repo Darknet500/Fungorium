@@ -1,4 +1,5 @@
 package Controller;
+import Gamemode.GameMode;
 import Model.Bridge.*;
 import View.*;
 import Model.Bug.*;
@@ -19,6 +20,11 @@ public class Controller {
     private GameBoard gameBoard;
     private IView view;
     private long seed;
+    private GameMode gameMode;
+
+    public Controller(GameMode gameMode) {
+        this.gameMode = gameMode;
+    }
 
     public void connectObjects(IView view, GameBoard gameBoard) {
         this.view = view;
@@ -41,24 +47,21 @@ public class Controller {
         for (int k = 1; k <= 25; k++) {
             r = rand.nextDouble();
             TektonBase tekton;
-            if (r < 0.10) {
+            if (r < 0.3) {
                 tekton = new Tekton();
                 normalTektonsNumber.add(k-1);
 
-            } else if (r < 0.61) {
+            } else if (r < 0.65) {
                 tekton = new Peat();
-            } else if (r < 0.74) {
+            } else if (r < 0.80) {
                 tekton = new Stone();
-            } else if (r < 0.87) {
+            } else if (r < 0.91) {
                 tekton = new Swamp();
             } else {
                 tekton = new Soil();
             }
         }
 
-        //gameBoard.getTekton(0).isNeighbour(gameBoard.getTekton(1));
-        //gameBoard.getTekton(1).isNeighbour(gameBoard.getTekton(0));
-        gameBoard.tektonSpreading();
 
         List<Point> triangulationEdges = List.of(
                 new Point(6, 15),
@@ -191,20 +194,15 @@ public class Controller {
         gameBoard.getShroomers().values().forEach(Shroomer::endOfRoundAdministration);
         gameBoard.getBuggers().values().forEach(Bugger::endOfTurn);
         Random rnd = new Random();
-        if (rnd.nextDouble()<0.20) {
+        if (gameMode==GameMode.game && rnd.nextDouble()<0.284) {
             for (int i = 0; i < 100; i++) {
                 TektonBase tektonN = gameBoard.getTektons().get(rnd.nextInt(gameBoard.getTektons().size()));
                 if (!tektonN.hasMushroom() && tektonN.getBug() == null) {
-                    gameBoard.breakATekton(tektonN);
+                    tektonN.breakTekton(42);
                     break;
                 }
             }
         }
-        ///random vagy enm random tekton törése
-        /*if(seed!=12345L) {
-            Random rand = new Random(seed);
-            gameBoard.getTektons().get(rand.nextInt(gameBoard.getTektons().size())).breakTekton(seed);
-        }*/
     }
 
     public boolean move(Bug bug, TektonBase to){
@@ -266,11 +264,6 @@ public class Controller {
         if (gameBoard.getShroomers().containsKey(actualPlayer)) {
             if(gameBoard.getShroomers().get(actualPlayer).throwSpore(mushroom,target)){
                 success();
-                for(Shroomer s: gameBoard.getShroomers().values()){
-                    s.tryGrowMushroom(mushroom.getLocation());
-                    s.traverseHypaNetwork();
-                }
-
                 return true;
             }
         }

@@ -57,6 +57,7 @@ public class GameBoard {
     private static int swampID = 1;
     private static int tektonID = 1;
     private static final Random rand = new Random();
+    private static List<Point> tektonpoints;
 
     public GameBoard(){
         view = null;
@@ -71,6 +72,37 @@ public class GameBoard {
         hitboxObjectMap = new HashMap<>();
         shroomerColorMap = new HashMap<>();
         buggerColorMap = new HashMap<>();
+
+
+        tektonpoints = Arrays.asList(
+                new Point(95635, 51330),
+                new Point(58440, 74830),
+                new Point(11520, 6060),
+                new Point(74560, 11240),
+                new Point(70580, 64090),
+                new Point(99965, 1430),
+                new Point(22140, 98540),
+                new Point(23850, 18400),
+                new Point(61340, 8840),
+                new Point(30070, 46510),
+                new Point(12050, 67500),
+                new Point(37090, 23870),
+                new Point(82365, 48870),
+                new Point(50355, 25570),
+                new Point(0, 55030),
+                new Point(25255, 71530),
+                new Point(93000, 24130),
+                new Point(80840, 96560),
+                new Point(4965, 30380),
+                new Point(44170, 75540),
+                new Point(46440, 20),
+                new Point(86705, 20),
+                new Point(70225, 37330),
+                new Point(43350, 48390),
+                new Point(20990, 41980)
+        );
+
+
     }
 
     public void connectToView(IView view){
@@ -156,41 +188,16 @@ public class GameBoard {
         double randmovx = (rand.nextDouble()-1)/4;
         double randmovy = (rand.nextDouble()-1)/4;
 
-        List<Point> tektonpoints = Arrays.asList(
-                new Point(xborder + (int)(0.95635 * drawingSurfaceWidth), yborder + (int)(0.5133 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.5844 * drawingSurfaceWidth), yborder + (int)(0.7483 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.1152 * drawingSurfaceWidth), yborder + (int)(0.0606 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.7456 * drawingSurfaceWidth), yborder + (int)(0.1124 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.7058 * drawingSurfaceWidth), yborder + (int)(0.6409 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.99965 * drawingSurfaceWidth), yborder + (int)(0.0143 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.2214 * drawingSurfaceWidth), yborder + (int)(0.9854 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.2385 * drawingSurfaceWidth), yborder + (int)(0.1840 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.6134 * drawingSurfaceWidth), yborder + (int)(0.0884 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.3007 * drawingSurfaceWidth), yborder + (int)(0.4651 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.1205 * drawingSurfaceWidth), yborder + (int)(0.6750 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.3709 * drawingSurfaceWidth), yborder + (int)(0.2387 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.82365 * drawingSurfaceWidth), yborder + (int)(0.4887 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.50355 * drawingSurfaceWidth), yborder + (int)(0.2557 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.0000 * drawingSurfaceWidth), yborder + (int)(0.5503 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.25255 * drawingSurfaceWidth), yborder + (int)(0.7153 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.9300 * drawingSurfaceWidth), yborder + (int)(0.2413 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.8084 * drawingSurfaceWidth), yborder + (int)(0.9656 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.04965 * drawingSurfaceWidth), yborder + (int)(0.3038 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.4417 * drawingSurfaceWidth), yborder + (int)(0.7554 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.4644 * drawingSurfaceWidth), yborder + (int)(0.0002 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.86705 * drawingSurfaceWidth), yborder + (int)(0.0002 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.70225 * drawingSurfaceWidth), yborder + (int)(0.3733 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.4335 * drawingSurfaceWidth), yborder + (int)(0.4839 * drawingSurfaceHeight)),
-                new Point(xborder + (int)(0.2099 * drawingSurfaceWidth), yborder + (int)(0.4198 * drawingSurfaceHeight))
-        );
 
 
 
+        ///tektonok létrehozásához közös dolgok
         Point tektonpoint = new Point(0,0);
-        if (tektonsCount>=0&&tektonsCount<25)
-            tektonpoint = tektonpoints.get(tektonsCount);
-        //tektonpoint = new Point(xstep+tektonsCount%5*xstep+(int)(randmovx*xstep),ystep+(int)Math.floor((double)tektonsCount/5)*ystep+(int)(randmovy*ystep));
-
+        if (tektonsCount<25) {
+            double calculatedX = tektonpoints.get(tektonsCount).getX()/100000.0;
+            double calculatedY = tektonpoints.get(tektonsCount).getY()/100000.0;
+            tektonpoint = new Point(xborder+(int)Math.floor(calculatedX*drawingSurfaceWidth),yborder+(int)Math.floor(calculatedY*drawingSurfaceHeight));
+        }
 
         int tektonsize = (int)(ystep*0.8);
 
@@ -416,34 +423,45 @@ public class GameBoard {
 
     public int getNumberOfPlayers(){return shroomers.size() + buggers.size();}
 
-
-
     static private Point getSporeHitboxPoint(TektonBase sporelocation){
         int tektonsize=view.getDrawingSurfaceHeight()*2/15;
         int sporecount = sporelocation.getStoredSpores().size()-1;
-        double angle =  sporecount*Math.PI/5.834;
-        Point locationTektonCenterPoint =((TektonHitbox)objectHitboxMap.get(sporelocation)).getCenterPoint();
-        int x = locationTektonCenterPoint.x + (int)(Math.sin(angle)*tektonsize*0.35);
-        int y = locationTektonCenterPoint.y + (int)(Math.cos(angle)*tektonsize*0.35);
-        return new Point(x, y);
+        int i=0;
+        while(true){
+            boolean isPlaceFree = true;
+            double angle =  i*Math.PI/5.05;
+            Point locationTektonCenterPoint =((TektonHitbox)objectHitboxMap.get(sporelocation)).getCenterPoint();
+            int x = locationTektonCenterPoint.x + (int)(Math.sin(angle)*tektonsize*0.35*Math.pow(0.8,i/10));
+            int y = locationTektonCenterPoint.y + (int)(Math.cos(angle)*tektonsize*0.35*Math.pow(0.8,i/10));
+            Point tmpPoint = new Point (x,y);
+            for(Spore s: sporelocation.getStoredSpores()){
+                if(s.getHitbox().getCenterPoint().getX() == tmpPoint.getX()&&s.getHitbox().getCenterPoint().getY()==tmpPoint.getY()){
+                    isPlaceFree = false;
+                }
+            }
+
+            if(isPlaceFree){
+                return tmpPoint;
+            }
+            i++;
+
+        }
     }
 
     /**
      * Antigravitációs erőt szimulálva mozgatja a tektonokat, azaz, hagyja hogy egymástól távolodjanak
+     * Maguk a TektonBase objektumok hívják meg tekton törés után
      */
-    public void tektonSpreading(){
-        List<TektonHitbox> tektonhitboxes = new ArrayList<>();
+    static public void tektonSpreading(){
         double[][] movedCenterpoint=new double[2][allTektons.size()];
-        for(TektonBase tekton: allTektons){
-            tektonhitboxes.add((TektonHitbox)objectHitboxMap.get(tekton));        }
         for (int i=0;i<10000;i++){
             int j=0;
             Arrays.fill(movedCenterpoint[0],0);
             Arrays.fill(movedCenterpoint[1],0);
-            for(TektonHitbox tek: tektonhitboxes){
+            for(TektonBase tek: allTektons){
                 double fx = 0;
                 double fy = 0;
-                for(TektonHitbox otherTek: tektonhitboxes){
+                for(TektonBase otherTek: allTektons){
                     if(tek!=otherTek){
                         int dx = tek.getCenterPoint().x - otherTek.getCenterPoint().x;
                         int dy = tek.getCenterPoint().y - otherTek.getCenterPoint().y;
@@ -467,21 +485,32 @@ public class GameBoard {
                 dx = Math.max(10,(view.getDrawingSurfaceWidth()-tek.getCenterPoint().x));
                 fx+=tek.getWeight()*100/(dx*dx);
 
+                //csekkoljuk hogy ne legyen túl nagy ez az erő
+                while(true){
+                    double forceStrength = Math.sqrt(dx*dx+dy*dy);
+                    if(forceStrength>20){
+                        dx=dx/3;
+                        dy=dy/3;
+                    }else
+                        break;
+                }
+
+
                 movedCenterpoint[0][j]=fx/tek.getWeight()*50;
                 movedCenterpoint[1][j]=fy/tek.getWeight()*50;
                 j++;
             }
             j=0;
-            for(TektonHitbox tek: tektonhitboxes){
+            for(TektonBase tek: allTektons){
                 int movedpointX = (int)(Math.min(view.getDrawingSurfaceWidth()*11/12,Math.max(view.getDrawingSurfaceWidth()/12,tek.getCenterPoint().x+movedCenterpoint[0][j])));
                 int movedpointY = (int)(Math.min(view.getDrawingSurfaceHeight()*11/12,Math.max(view.getDrawingSurfaceHeight()/12,tek.getCenterPoint().y+movedCenterpoint[1][j])));
-                tek.refreshCenterPoint(new Point(movedpointX,movedpointY));
+                tek.setCenterPoint(new Point(movedpointX,movedpointY));
                 j++;
             }
             //lecsekkoljuk hogy eltávolodtak-e már a tektonok amennyire kell
             boolean spreadEnough = true;
-            for(TektonHitbox tek: tektonhitboxes){
-                for(TektonHitbox otherTek: tektonhitboxes){
+            for(TektonBase tek: allTektons){
+                for(TektonBase otherTek: allTektons){
                     if(tek!=otherTek){
                         int dx = tek.getCenterPoint().x - otherTek.getCenterPoint().x;
                         int dy = tek.getCenterPoint().y - otherTek.getCenterPoint().y;
@@ -494,75 +523,8 @@ public class GameBoard {
             if (spreadEnough){
                 break;
             }
-            if(i==9999) System.out.println("nem sikerült");
         }
-
-        ///hypák hitboxainak mozgatása (többi objektum a tekton setLocation metódusában belül mozgatódik)
-        for(TektonBase tekton: allTektons){
-            for(Hypa h: tekton.getHypas()){
-
-            }
-
-        }
-
     }
-
-    public void breakATekton(TektonBase tekton){
-        int tektoncount= allTektons.size();
-
-        List<TektonBase> oldneighbours = tekton.getNeighbours();
-        tekton.breakTekton(42);
-        TektonBase newTekton = allTektons.get(tektoncount);
-        tekton.addNeighbour(newTekton);
-        newTekton.addNeighbour(tekton);
-
-
-        // megyünk egy kört a régi tekton körül, és oda helyezzük el az újat, ahol a maximális a távolság a többitől
-        int circleSteps = 32;
-        double maxdistance=0;
-        Point bestPoint = new Point(0,0);
-        for (int i=0;i<circleSteps;i++){
-            Point tmppoint = new Point(tekton.getHitbox().getCenterPoint().x+(int)(Math.cos(i*Math.PI*2/circleSteps)*((double)(view.getDrawingSurfaceHeight()*2/15)+5)),tekton.getHitbox().getCenterPoint().y+(int)(Math.sin(i*Math.PI*2/circleSteps)*((double)(view.getDrawingSurfaceHeight()*2/15)+5)));
-            double mindistance = 100000;
-            for(TektonBase tekt: allTektons){
-                if(tekt!=tekton){
-                    double dist = Math.sqrt(Math.pow(tmppoint.x-tekt.getHitbox().getCenterPoint().getX(),2)+Math.pow(tmppoint.y-tekt.getHitbox().getCenterPoint().getY(),2));
-                    if (dist<mindistance)
-                        mindistance=dist;
-                }
-            }
-            if (mindistance>maxdistance&&(tmppoint.x>view.getDrawingSurfaceHeight()/15)&&tmppoint.y>(view.getDrawingSurfaceHeight()*2/15)&&tmppoint.x<(view.getDrawingSurfaceWidth()-(view.getDrawingSurfaceHeight()*2/15))&&tmppoint.y<(view.getDrawingSurfaceHeight()-(view.getDrawingSurfaceHeight()*2/15))){
-                maxdistance=mindistance;
-                bestPoint= new Point(tmppoint);
-            }
-
-        }
-        newTekton.getHitbox().refreshCenterPoint(bestPoint);
-
-
-
-
-
-
-
-        newTekton.getHitbox().setWeight(tekton.getHitbox().getWeight()*2);
-        tekton.getHitbox().setWeight(tekton.getHitbox().getWeight()*2);
-        tektonSpreading();
-        for(TektonBase neighbour: oldneighbours){
-            if(neighbour.getHitbox().getCenterPoint().distance(tekton.getHitbox().getCenterPoint())<
-            neighbour.getHitbox().getCenterPoint().distance(newTekton.getHitbox().getCenterPoint())){
-                tekton.addNeighbour(neighbour);
-                neighbour.addNeighbour(tekton);
-            }else{
-                newTekton.addNeighbour(neighbour);
-                neighbour.addNeighbour(newTekton);
-            }
-        }
-
-
-
-    }
-
 }
 
 
