@@ -1,9 +1,10 @@
 package View;
 
+import java.awt.*;
 import java.io.*;
 import java.util.*;
+import java.util.List;
 import java.util.function.BiFunction;
-import java.awt.Color;
 
 import Controller.Controller;
 import Gamemode.GameMode;
